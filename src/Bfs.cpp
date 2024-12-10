@@ -10,11 +10,13 @@ void Bfs::findPath(const std::vector<std::vector<double>>& map, const std::pair<
     visited[start.second][start.first] = true;
 
     std::vector<std::pair<int, int>> directions = {{0, -1}, {0, 1}, {-1, 0}, {1, 0}};
-    
+
+    int total_explored = 0;
     while (!q.empty()) {
         std::pair<int, int> current = q.front();
         q.pop();
-
+        
+        total_explored++;
         if (current == goal) {
             std::vector<std::pair<int, int>> path;
             double totalCost = 0;
@@ -26,6 +28,7 @@ void Bfs::findPath(const std::vector<std::vector<double>>& map, const std::pair<
             }
 
             path.push_back(start);
+            std::cout << "Explored nodes: " << total_explored << std::endl;
             printPath(path, totalCost);
             return;
         }

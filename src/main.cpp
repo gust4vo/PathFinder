@@ -1,4 +1,8 @@
 #include "Bfs.hpp"
+#include "Ucs.hpp"
+#include "Ids.hpp"
+#include "Greedy.hpp"
+#include "Astar.hpp"
 
 int main(int argc, char *argv[]) {
     if (argc < 7) {
@@ -8,6 +12,13 @@ int main(int argc, char *argv[]) {
 
     std::string filename = argv[1];
     std::string method = argv[2];
+
+    // Convert method to uppercase
+    for (char& c : method) {
+        if (c >= 'a' && c <= 'z') {
+            c = c - 'a' + 'A';
+        }
+    }
 
     int start_x = std::stoi(argv[3]);
     int start_y = std::stoi(argv[4]);
@@ -55,5 +66,16 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    Bfs::findPath(map, {start_x, start_y}, {goal_x, goal_y});
+    if(method == "BFS") 
+        Bfs::findPath(map, {start_x, start_y}, {goal_x, goal_y});
+    else if(method == "UCS")
+        Ucs::findPath(map, {start_x, start_y}, {goal_x, goal_y});
+    else if(method == "GREEDY")
+        Greedy::findPath(map, {start_x, start_y}, {goal_x, goal_y});
+    else if(method == "ASTAR")
+        Astar::findPath(map, {start_x, start_y}, {goal_x, goal_y});
+    else if(method == "IDS")
+        Ids::findPath(map, {start_x, start_y}, {goal_x, goal_y});
+    else
+        std::cerr << "Unknown method: " << method << std::endl;
 }
