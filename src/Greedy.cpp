@@ -3,16 +3,15 @@
 struct Compare {
     bool operator()(const std::pair<std::pair<int, double>, std::pair<int, int>>& a, 
                     const std::pair<std::pair<int, double>, std::pair<int, int>>& b) const {
-        // Prioriza menor distância Manhattan
+        // Prioritize lower manhattam distance
         if (a.first.first != b.first.first) {
-            return a.first.first > b.first.first; // Maior Manhattan tem menor prioridade
+            return a.first.first > b.first.first; 
         }
-        // Empate: prioriza menor custo acumulado
-        return a.first.second > b.first.second; // Maior custo tem menor prioridade
+        // Draw: prioritize lower accumulated cost 
+        return a.first.second > b.first.second; 
     }
 };
 
-// Função findPath ajustada
 void Greedy::findPath(
     const std::vector<std::vector<double>>& map, 
     const std::pair<int, int>& start, 
@@ -27,7 +26,7 @@ void Greedy::findPath(
     std::vector<std::vector<bool>> visited(map.size(), std::vector<bool>(map[0].size(), false));
     std::vector<std::vector<std::pair<int, int>>> parent(map.size(), std::vector<std::pair<int, int>>(map[0].size(), {-1, -1}));
 
-    pq.push({{0, 0}, start}); // Distância Manhattan, custo acumulado
+    pq.push({{0, 0}, start}); // manhattam distance, accumulated cost, {x, y}
     cost[start.second][start.first] = 0;
 
     std::vector<std::pair<int, int>> directions = {{0, -1}, {0, 1}, {-1, 0}, {1, 0}};

@@ -1,60 +1,64 @@
 #include "Ids.hpp"
 
-void Ids::findPath(const std::vector<std::vector<double>>& map, const std::pair<int, int>& start, const std::pair<int, int>& goal)
-{
-    for (int maxDepth = 0; maxDepth < 100000; maxDepth++) {
-        std::vector<std::vector<double>> cost(map.size(), std::vector<double>(map[0].size(), std::numeric_limits<double>::infinity()));
-        std::vector<std::vector<bool>> visited(map.size(), std::vector<bool>(map[0].size(), false));
-        std::vector<std::vector<std::pair<int, int>>> parent(map.size(), std::vector<std::pair<int, int>>(map[0].size(), {-1, -1}));
+bool Ids::DLS(const std::vector<std::vector<double>>& map, const std::pair<int, int>& current, const std::pair<int, int>& goal,
+              int depth, int maxDepth, std::vector<std::vector<std::pair<int, int>>>& parent, int& total_explored, 
+              std::vector<std::pair<int, int>>& directions, std::vector<std::vector<int>>& depth_map) {
+    
+    total_explored++;
 
-        cost[start.second][start.first] = 0;
+    if (current == goal)
+        return true; 
 
-        std::vector<std::pair<int, int>> directions = {{0, -1}, {0, 1}, {-1, 0}, {1, 0}};
+    if (depth >= maxDepth)
+        return false;
+    
+    for (const auto& direction : directions) {
+        int x = current.first + direction.first;
+        int y = current.second + direction.second;
 
-        std::stack<std::pair<std::pair<int, int>, int>> stack;
-        stack.push({start, 0}); // Add current depth to the stack
-
-        while (!stack.empty()) {
-            std::pair<int, int> current = stack.top().first;
-            int currentDepth = stack.top().second;
-            stack.pop();
-
-            if (visited[current.second][current.first]) {
-                continue;
-            }
-
-            visited[current.second][current.first] = true;
-
-            if (current == goal) {
-                std::vector<std::pair<int, int>> path;
-                double totalCost = cost[goal.second][goal.first];
-
-                while (current != start) {
-                    path.push_back(current);
-                    current = parent[current.second][current.first];
-                }
-                path.push_back(start);
-                printPath(path, totalCost);
-                return;
-            }
-
-            if (currentDepth >= maxDepth) {
-                continue;
-            }
-
-            for (const std::pair<int, int>& direction : directions) {
-                int x = current.first + direction.first;
-                int y = current.second + direction.second;
-
-                if (isValid(x, y, map) && !visited[y][x]) {
-                    double newCost = cost[current.second][current.first] + map[y][x];
-                    if (newCost < cost[y][x]) {
-                        cost[y][x] = newCost;
-                        parent[y][x] = current;
-                        stack.push({{x, y}, currentDepth + 1}); // Increment depth
-                    }
+        if (isValid(x, y, map)) {
+            if(depth_map[y][x] == -1 || depth+1 <= depth_map[y][x]) {
+                parent[y][x] = current;
+                depth_map[y][x] = depth+1;
+                if (DLS(map, {x, y}, goal, depth + 1, maxDepth, parent, total_explored, directions, depth_map)) {
+                    return true;
                 }
             }
         }
     }
+    return false;
 }
+
+void Ids::findPath(const std::vector<std::vector<double>>& map, const std::pair<int, int>& start, const std::pair<int, int>& goal) {
+    int total_explored = 0;
+
+    std::vector<std::pair<int, int>> directions = {{0, -1}, {0, 1}, {-1, 0}, {1, 0}};
+
+    std::vector<std::vector<int>> depth_map (map.size(), std::vector<int>(map[0].size(), -1));
+    std::vector<std::vector<std::pair<int, int>>> parent (map.size(), std::vector<std::pair<int, int>>(map[0].size(), {-1, -1}));
+
+    for (int maxDepth = abs(goal.first-start.first)+abs(goal.second-start.second); maxDepth < 100000; maxDepth++) {
+        if (DLS(map, start, goal, 0, maxDepth, parent, total_explored, directions, depth_map)) {
+            double totalCost = 0;
+            
+            std::vector<std::pair<int, int>> path;
+            std::pair<int, int> current = goal;
+
+            while (current != start) {
+                totalCost += map[current.second][current.first];
+                path.push_back(current);
+                current = parent[current.second][current.first];
+            }
+            path.push_back(start);
+
+            std::cout << "Explored nodes: " << total_explored << std::endl;
+            printPath(path, totalCost);
+            return;
+        }
+    }
+
+    std::cerr << "No path found" << std::endl;
+}
+
+
+

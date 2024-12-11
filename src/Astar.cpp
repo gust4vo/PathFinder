@@ -49,8 +49,8 @@ void Astar::findPath(
             int y = current.second + direction.second;
 
             if (isValid(x, y, map) && !visited[y][x]) {
-                double g = cost[current.second][current.first] + map[y][x]; // Custo acumulado
-                double h = std::abs(goal.first - x) + std::abs(goal.second - y); // Heurística (distância de manhattam)
+                double g = cost[current.second][current.first] + map[y][x]; 
+                double h = std::abs(goal.first - x) + std::abs(goal.second - y); // manhattam distance
                 double f = g + h;
                 if (g < cost[y][x]) { 
                     cost[y][x] = g;

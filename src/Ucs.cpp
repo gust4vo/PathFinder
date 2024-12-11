@@ -4,9 +4,9 @@ void Ucs::findPath(const std::vector<std::vector<double>>& map, const std::pair<
 {
     std::priority_queue<std::pair<double, std::pair<int, int>>, std::vector<std::pair<double, std::pair<int, int>>>, std::greater<std::pair<double, std::pair<int, int>>>> pq;
     
-    std::vector<std::vector<bool>> visited(map.size(), std::vector<bool>(map[0].size(), false));
-    std::vector<std::vector<double>> cost(map.size(), std::vector<double>(map[0].size(), std::numeric_limits<double>::infinity()));
-    std::vector<std::vector<std::pair<int, int>>> parent(map.size(), std::vector<std::pair<int, int>>(map[0].size(), {-1, -1}));
+    std::vector<std::vector<bool>> visited (map.size(), std::vector<bool>(map[0].size(), false));
+    std::vector<std::vector<double>> cost (map.size(), std::vector<double>(map[0].size(), std::numeric_limits<double>::infinity()));
+    std::vector<std::vector<std::pair<int, int>>> parent (map.size(), std::vector<std::pair<int, int>>(map[0].size(), {-1, -1}));
 
     pq.push({0, start});
     cost[start.second][start.first] = 0;
